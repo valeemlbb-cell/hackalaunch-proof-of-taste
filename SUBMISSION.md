@@ -5,7 +5,7 @@
 - **Network:** Solana **devnet** only
 - **Repository:** <https://github.com/valeemlbb-cell/hackalaunch-proof-of-taste>
 - **Live app:** <https://valeemlbb-cell.github.io/hackalaunch-proof-of-taste/> (GitHub Pages, deployed by CI on every push to the default branch)
-- **Demo video:** `<VIDEO_URL>` — upload `demo_x.mp4` (≤ 20 MB, ≤ 140 s, fits X's limit) or `demo.mp4` (1080p) and paste the link. The platform wants a URL, so the files stay out of git.
+- **Demo video:** `PASTE_VIDEO_URL_HERE` — the one canonical cut is **`demo.mp4`** at the root of this packet folder (1920×1080, 2 min 30 s, 14 MB). The 720p copy beside it is the *same cut*, re-encoded only to fit upload size limits — upload that one if the host rejects 14 MB. Upload, then replace this line with the URL. The platform wants a link, so the video files stay out of git (see `.gitignore`).
 - **Payout address:** `7W31iaCmjerN1jkpEnmZevn74SZxv83yEQvLsnc4PS7Q`
 - **Team:** Warung Ops — Henggar (rakavaleeqa@warungsosmed.store, Telegram @sambobolo, X @issue0x)
 
@@ -42,7 +42,7 @@ chose is part of what you signed for. The on-chain mechanic and the design are t
 
 | Requirement | Where it is met |
 |---|---|
-| **Public GitHub repo** | Prepared locally with commits; pushed by the owner via `RUN.md` step 1 (`gh repo create … --public --push`). MIT licence in `LICENSE`. |
+| **Public GitHub repo** | <https://github.com/valeemlbb-cell/hackalaunch-proof-of-taste>, default branch `main`; the owner pushes the latest commits with `git push -u origin main` (`RUN.md` step 1). MIT licence in `LICENSE`. |
 | **README names the network** | `README.md` — "Solana devnet", stated in the first lines, in the *Programs and addresses* table, and in the footer of the app itself. |
 | **README names every program ID touched** | `README.md` → *Programs and addresses*: Token-2022 `TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`, ATA `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`, Memo `MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr`, System `11111111111111111111111111111111`, Compute Budget `ComputeBudget111111111111111111111111111111`. |
 | **README names mint addresses** | Same section: each badge mints a **fresh keypair**, so there is no fixed mint to list — the README says so, and the mint address is shown in the receipt before signing and in the Verify output afterwards. The mint from the recorded run appears on screen in the video. |

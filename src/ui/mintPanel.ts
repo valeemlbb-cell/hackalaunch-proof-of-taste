@@ -124,7 +124,7 @@ function renderSigner(): void {
     if (state.signer.kind === 'burner') {
       children.push(
         el('p', { class: 'note' }, [
-          'This burner was generated in your browser and is stored in this browser only. It holds devnet SOL, which is worthless. Never put real funds in it.',
+          'A throwaway devnet key is stored in this browser — press “Forget this burner” to erase it. It is never sent anywhere, it holds only devnet SOL, which is worthless, and this app will never ask you for a seed phrase or a private key. Never put real funds in it.',
         ]),
       );
     }

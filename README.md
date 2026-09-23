@@ -206,8 +206,10 @@ responsible for the submission.
 ## Links
 
 - **Live app: <https://valeemlbb-cell.github.io/hackalaunch-proof-of-taste/>** — deployed from
-  `main`/`master` by [`.github/workflows/pages.yml`](.github/workflows/pages.yml), which runs
+  `main` by [`.github/workflows/pages.yml`](.github/workflows/pages.yml), which runs
   `npm ci && npm test && npm run build` first, so a red test suite never reaches the live URL.
 - **Repository: <https://github.com/valeemlbb-cell/hackalaunch-proof-of-taste>**
-- Demo video: `demo_x.mp4` in the packet folder (uploaded to X / YouTube for the submission form —
-  the platform wants a link, so the file itself is deliberately not committed).
+- Demo video: **`demo.mp4`** at the root of the packet folder is the one canonical cut — 1920×1080,
+  2 min 30 s. The 720p copy beside it is the same cut, re-encoded only to fit upload size limits.
+  The video is uploaded to X / YouTube for the submission form, so the file itself is deliberately
+  not committed.

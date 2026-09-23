@@ -14,3 +14,8 @@ demo_small.mp4
 
 # Internal pre-submission review notes (judge simulation) - not part of the deliverable
 REVIEW_*.md
+
+# Local burner secret key used only when re-recording the demo — never commit.
+burner.b58
+*.b58
+__pycache__/
