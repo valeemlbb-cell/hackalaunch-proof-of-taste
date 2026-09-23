@@ -11,3 +11,6 @@ demo/
 # Demo videos kept on disk, linked not committed
 demo.mp4
 demo_small.mp4
+
+# Internal pre-submission review notes (judge simulation) - not part of the deliverable
+REVIEW_*.md
