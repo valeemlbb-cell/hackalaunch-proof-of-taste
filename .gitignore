@@ -7,3 +7,7 @@ dist/
 
 # The demo recording: kept on disk, uploaded to a video host, not committed.
 demo/
+
+# Demo videos kept on disk, linked not committed
+demo.mp4
+demo_small.mp4
