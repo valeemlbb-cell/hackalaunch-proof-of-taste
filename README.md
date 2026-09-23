@@ -164,12 +164,18 @@ tests/roundtrip.test.ts   build -> compile -> rebuild from the transaction -> ha
 
 ## Honest status
 
-- Runs on devnet. The public devnet faucet was rate-limiting this machine's IP while the demo was
-  recorded, so the recorded run used a **local `solana-test-validator`** — visible in the video,
-  where the receipt honestly prints `unrecognised-cluster:…` instead of pretending to be devnet.
-  The code path is identical; point it at devnet with SOL in the signer and it prints `devnet`.
-- The demo voice-over uses the local Windows speech engine because the neural TTS host was
-  unreachable from the build machine.
+- **The live link is real and deployed from CI:** every push to `main` runs the test suite and only
+  then publishes `dist/`, so the URL above can never serve a build whose tests failed.
+- **The demo is a real end-to-end transaction** — built, signed, submitted, confirmed, then
+  re-derived from the chain and hash-compared — but it runs against a **local
+  `solana-test-validator`**, not public devnet, because this machine's IP sat inside the devnet
+  faucet's cooldown window and could not obtain test SOL. The video does not hide this: the app
+  identifies the cluster from its genesis hash, so the stamp on screen reads
+  `CONFIRMED ON UNRECOGNISED-CLUSTER:…` rather than claiming devnet, and the narration says why.
+  The code path is identical — point it at devnet with SOL in the signer and it prints `devnet`.
+  [RUN.md](RUN.md) has the single command that re-records it against public devnet.
+- The demo voice-over uses the local Windows speech engine because the neural TTS host could not be
+  resolved from the build machine.
 - There is no backend, no analytics, no telemetry, and no fee taken by this app anywhere.
 
 ---

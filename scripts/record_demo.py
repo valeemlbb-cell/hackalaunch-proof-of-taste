@@ -1,7 +1,7 @@
 """
 Records the demo video: a real browser, a real transaction, a real verification.
 
-    python scripts/record_demo.py <app-url> <rpc-url> <burner-base58-file>
+    python scripts/record_demo.py <app-url> <rpc-url> <burner-base58-file> [--cluster devnet|local]
 
 Nothing is faked. The script drives the built app in Chromium, signs with a
 disposable keypair whose secret key it seeds into localStorage, waits for the
@@ -14,7 +14,9 @@ Requires: playwright (with chromium), edge-tts, ffmpeg on PATH.
 
 from __future__ import annotations
 
+import argparse
 import asyncio
+import hashlib
 import pathlib
 import subprocess
 import sys
@@ -219,27 +221,45 @@ def record(app_url: str, rpc_url: str, secret_key: str, video_dir: pathlib.Path)
     return pathlib.Path(path), signature
 
 
-def main() -> int:
-    if len(sys.argv) < 4:
-        print(__doc__)
-        return 2
-    app_url, rpc_url, key_file = sys.argv[1], sys.argv[2], sys.argv[3]
-    secret_key = pathlib.Path(key_file).read_text(encoding="utf-8").strip()
-
-    OUT.mkdir(parents=True, exist_ok=True)
-    track = build_voiceover(OUT / "audio")
-    raw = record(app_url, rpc_url, secret_key, OUT / "raw")
-
-    final = OUT / "demo.mp4"
+def encode(raw: pathlib.Path, track: pathlib.Path, out: pathlib.Path,
+           width: int, height: int, crf: str) -> pathlib.Path:
     subprocess.run(
         ["ffmpeg", "-y", "-i", str(raw), "-i", str(track),
          "-map", "0:v:0", "-map", "1:a:0",
-         "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-pix_fmt", "yuv420p",
-         "-vf", f"scale={WIDTH}:{HEIGHT}:flags=lanczos,fps=30",
-         "-c:a", "aac", "-b:a", "160k", "-shortest", str(final)],
+         "-c:v", "libx264", "-preset", "slow", "-crf", crf, "-pix_fmt", "yuv420p",
+         "-vf", f"scale={width}:{height}:flags=lanczos,fps=30",
+         "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart",
+         "-t", str(DURATION), "-shortest", str(out)],
         check=True, capture_output=True,
     )
-    print("wrote", final)
+    return out
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("app_url", help="the built app, e.g. the live GitHub Pages URL")
+    ap.add_argument("rpc_url", help="RPC endpoint the browser talks to")
+    ap.add_argument("key_file", help="file holding the burner's base58 secret key")
+    ap.add_argument("--cluster", choices=sorted(CLUSTER_LINE), default="devnet",
+                    help="which cluster the run really hits — it only picks the honest "
+                         "narration line; the app still reads the genesis hash itself")
+    args = ap.parse_args()
+
+    secret_key = pathlib.Path(args.key_file).read_text(encoding="utf-8").strip()
+    script = scenes(args.cluster)
+
+    OUT.mkdir(parents=True, exist_ok=True)
+    track = build_voiceover(OUT / "audio", script)
+    raw, signature = record(args.app_url, args.rpc_url, secret_key, OUT / "raw")
+
+    # demo.mp4 is the 1080p master; demo_x.mp4 is the copy that fits X's limits
+    # (140 seconds, 512 MB in theory but far less in practice) without a re-cut.
+    full = encode(raw, track, ROOT / "demo.mp4", WIDTH, HEIGHT, "20")
+    small = encode(raw, track, ROOT / "demo_x.mp4", 1280, 720, "26")
+    for path in (full, small):
+        print(f"wrote {path} ({path.stat().st_size / 1e6:.1f} MB)")
+    (OUT / "last-signature.txt").write_text(f"{signature}\n{args.cluster}\n", encoding="utf-8")
+    print("signature:", signature)
     return 0
 
 

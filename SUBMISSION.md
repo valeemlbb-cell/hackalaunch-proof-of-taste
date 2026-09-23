@@ -47,7 +47,7 @@ chose is part of what you signed for. The on-chain mechanic and the design are t
 | **README names every program ID touched** | `README.md` → *Programs and addresses*: Token-2022 `TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb`, ATA `ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL`, Memo `MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr`, System `11111111111111111111111111111111`, Compute Budget `ComputeBudget111111111111111111111111111111`. |
 | **README names mint addresses** | Same section: each badge mints a **fresh keypair**, so there is no fixed mint to list — the README says so, and the mint address is shown in the receipt before signing and in the Verify output afterwards. The mint from the recorded run appears on screen in the video. |
 | **README names external protocols** | Token-2022 metadata extension, Associated Token Account program, SPL Memo — all listed. No oracle, no AMM, no backend, no third-party API. |
-| **Video ≤ 3 minutes** | `demo.mp4` — **2 min 30 s**, 1920×1080, English voice-over. `demo_small.mp4` is the same cut at 720p, 3.6 MB, for upload limits. |
+| **Video ≤ 3 minutes** | `demo.mp4` — **2 min 18 s** (138 s), 1920×1080, English voice-over. `demo_x.mp4` is the same cut at 720p, 4.3 MB, inside X's 140-second limit. |
 | **Description contains the "design choice I'm proudest of" sentence** | See *The design choice I am proudest of* above — included verbatim in the pasted description. |
 | **No secrets in the repo** | No API keys, no private keys, no seed phrases. `.env.example` only, holding a single public RPC URL. `.gitignore` excludes `.env`, `demo/`, `demo.mp4`, `demo_small.mp4`. The app never asks anyone for a seed phrase or a private key. |
 | **Design and on-chain mechanic are one thing** (the brief) | The taste selection changes palette/type/border/radius/shadow/texture **and** the minted token's name and on-chain `taste` field; the receipt hash covers the taste, so the visual choice is cryptographically part of the signed transaction. |
@@ -72,11 +72,16 @@ from a human-written brief, under human direction and review — disclosed in th
 
 ## Honest status (also in the README)
 
-The public devnet faucet was rate-limiting this machine's IP while the demo was recorded, so the
-recorded run ran against a local `solana-test-validator`. This is visible in the video: the receipt
-honestly prints `unrecognised-cluster:…` rather than pretending to be devnet. The code path is
-identical — point it at devnet with SOL in the signer and it prints `devnet`. `RUN.md` contains the
-exact steps to re-record against public devnet if the owner wants a stronger submission before the
-deadline.
+The live link is deployed by CI, which runs the test suite before it publishes, so the URL above
+cannot serve a build whose tests failed.
+
+The demo is a genuine end-to-end transaction — built, signed, submitted, confirmed, then re-derived
+from the chain and hash-compared — but it runs against a local `solana-test-validator`, because this
+machine's IP sat inside the public devnet faucet's cooldown window and could not obtain test SOL.
+The video does not hide it: the app identifies the cluster from its genesis hash, so the stamp reads
+`CONFIRMED ON UNRECOGNISED-CLUSTER:…` rather than claiming devnet, and the narration says why. The
+code path is identical — point it at devnet with SOL in the signer and it prints `devnet`. `RUN.md`
+has the single command that re-records the same 138-second cut against public devnet, against the
+live URL, the moment test SOL is available.
 
 **Deadline:** Sep 25, 00:28 UTC (07:28 WIB). Voting opens at close for 24 h.
