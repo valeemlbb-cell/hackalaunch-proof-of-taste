@@ -28,40 +28,53 @@ WIDTH, HEIGHT = 1920, 1080
 VOICE = "en-US-AriaNeural"
 SAPI_VOICE = "Microsoft Hazel Desktop"
 
-# (start second, narration). The browser script waits for each start time, so
-# the visuals and the voice-over stay in step without any manual editing.
-SCENES: list[tuple[float, str]] = [
-    (0.0, "Every Solana app asks you to approve a transaction you cannot read. "
-          "Receipt First turns that transaction into a receipt in plain English, "
-          "and then staples that receipt to the chain."),
-    (13.0, "Pick a taste. The taste is not a theme sitting on top of the app. "
-           "It is the thing that gets minted, so changing it changes the token you receive."),
-    (24.0, "Connect a signer. No wallet installed? A disposable devnet burner is generated "
-           "right here in the browser, and it says so in as many words."),
-    (33.0, "Here is the receipt. Thirteen instructions, each one decoded and described. "
-           "Nothing is guessed: an instruction this app cannot explain is flagged, "
-           "and it disables the sign button entirely."),
-    (47.0, "Then the money. Rent deposits that you can reclaim are marked separately from "
-           "the network fee that you cannot. The app tells you the exact figure that never comes back."),
-    (61.0, "What you get. What can go wrong. Written as sentences, not as a hex blob."),
-    (71.0, "And this is the trick. The whole receipt is hashed with SHA two fifty six, "
-           "and you can open up the exact bytes that go into that hash."),
-    (83.0, "The sign button stays disabled until the risks are acknowledged. "
-           "Now we sign, and the hash rides along inside the transaction: "
-           "once in the memo, once in the token's own on-chain metadata."),
-    (99.0, "Confirmed. And look at the cluster label. This run is against a local validator, "
-           "because the public devnet faucet was rate limiting us while recording. "
-           "The app prints the cluster it actually found, from the genesis hash, rather than "
-           "claiming devnet. It refuses to build anything at all against mainnet."),
-    (108.0, "So let us check it. The verifier fetches the confirmed transaction, "
-            "decodes the instructions with the same decoder, regenerates every sentence, "
-            "hashes the result, and compares."),
-    (124.0, "Match. The words on the screen and the transaction on the chain are provably the same. "
-            "And the amount the chain actually took is the amount the receipt quoted, to the lamport."),
-    (137.0, "Disclosure you can check afterwards. That is the mechanic, and it is also the design."),
-]
+# X caps a video at 140 seconds, so the whole cut has to land inside that.
+DURATION = 138.0
 
-DURATION = 150.0
+# The one line that has to change with reality: the app prints the cluster it
+# actually found, from the genesis hash, and the narration must agree with it.
+CLUSTER_LINE = {
+    "devnet": "Confirmed on devnet. That label is not hard coded. The app identifies the cluster "
+              "from its genesis hash, so it prints what it actually found, and it refuses to build "
+              "a transaction at all against mainnet.",
+    "local": "Confirmed. And look at the cluster label. This run is against a local validator, "
+             "because the public devnet faucet was rate limiting us while recording. The app prints "
+             "the cluster it actually found, from the genesis hash, rather than claiming devnet. "
+             "It refuses to build anything at all against mainnet.",
+}
+
+
+def scenes(cluster: str) -> list[tuple[float, str]]:
+    """(start second, narration). The browser script waits for each start time,
+    so the visuals and the voice-over stay in step without any manual editing."""
+    return [
+        (0.0, "Every Solana app asks you to approve a transaction you cannot read. "
+              "Receipt First turns that transaction into a receipt in plain English, "
+              "and then staples that receipt to the chain. This is the live build, in a browser."),
+        (12.0, "Pick a taste. The taste is not a theme sitting on top of the app. "
+               "It is the thing that gets minted, so changing it changes the token you receive."),
+        (22.0, "Connect a signer. No wallet installed? A disposable devnet burner is generated "
+               "right here in the browser, and it says so in as many words."),
+        (31.0, "Here is the receipt. Thirteen instructions, each one decoded and described. "
+               "Nothing is guessed: an instruction this app cannot explain is flagged, "
+               "and it disables the sign button entirely."),
+        (44.0, "Then the money. Rent deposits you can reclaim are marked separately from the "
+               "network fee you cannot. The app names the exact figure that never comes back."),
+        (57.0, "What you get. What can go wrong. Written as sentences, not as a hex blob."),
+        (66.0, "And this is the trick. The whole receipt is hashed with SHA two fifty six, "
+               "and you can open up the exact bytes that go into that hash."),
+        (77.0, "The sign button stays disabled until the risks are acknowledged. "
+               "Now we sign, and the hash rides along inside the transaction: "
+               "once in the memo, once in the token's own on-chain metadata."),
+        (91.0, CLUSTER_LINE[cluster]),
+        (104.0, "So let us check it. The verifier fetches the confirmed transaction, "
+                "decodes the instructions with the same decoder, regenerates every sentence, "
+                "hashes the result, and compares."),
+        (118.0, "Match. The words on the screen and the transaction on the chain are provably the "
+                "same. And the amount the chain actually took is the amount the receipt quoted, "
+                "to the lamport."),
+        (131.0, "Disclosure you can check afterwards. That is the mechanic, and it is also the design."),
+    ]
 
 
 async def _speak_edge(text: str, path: pathlib.Path) -> None:
@@ -105,11 +118,14 @@ def speak(text: str, path: pathlib.Path) -> pathlib.Path:
     return wav
 
 
-def build_voiceover(audio_dir: pathlib.Path) -> pathlib.Path:
+def build_voiceover(audio_dir: pathlib.Path, script: list[tuple[float, str]]) -> pathlib.Path:
     audio_dir.mkdir(parents=True, exist_ok=True)
     parts = []
-    for index, (start, text) in enumerate(SCENES):
-        target = audio_dir / f"scene{index:02d}.mp3"
+    for index, (start, text) in enumerate(script):
+        # The filename carries a hash of the line, so editing the narration
+        # regenerates that clip instead of silently reusing the old wording.
+        stamp = hashlib.sha1(text.encode("utf-8")).hexdigest()[:8]
+        target = audio_dir / f"scene{index:02d}-{stamp}.mp3"
         existing = [c for c in (target, target.with_suffix(".wav")) if c.exists() and c.stat().st_size > 1024]
         parts.append((start, existing[0] if existing else speak(text, target)))
 
@@ -156,49 +172,51 @@ def record(app_url: str, rpc_url: str, secret_key: str, video_dir: pathlib.Path)
         page.reload(wait_until="load")
         started = time.monotonic()
 
-        at(6);   page.mouse.wheel(0, 260)
-        at(10);  page.mouse.wheel(0, -260)
+        at(5);   page.mouse.wheel(0, 260)
+        at(9);   page.mouse.wheel(0, -260)
 
-        at(14);  page.click("[data-taste-id='brutal']")
-        at(17);  page.click("[data-taste-id='terminal']")
-        at(20);  page.click("[data-taste-id='editorial']")
+        at(13);  page.click("[data-taste-id='brutal']")
+        at(16);  page.click("[data-taste-id='terminal']")
+        at(19);  page.click("[data-taste-id='editorial']")
 
-        at(25);  page.click("text=Use a devnet burner instead")
+        at(23);  page.click("text=Use a devnet burner instead")
         page.wait_for_selector(".receipt", timeout=60000)
 
-        at(34);  page.locator(".steps").scroll_into_view_if_needed()
-        at(40);  page.mouse.wheel(0, 320)
-        at(48);  page.locator(".costs").scroll_into_view_if_needed()
-        at(55);  page.mouse.wheel(0, 240)
-        at(62);  page.locator(".bullets--risk").scroll_into_view_if_needed()
-        at(72);  page.locator(".hashstrip").first.scroll_into_view_if_needed()
+        at(32);  page.locator(".steps").scroll_into_view_if_needed()
+        at(38);  page.mouse.wheel(0, 320)
+        at(45);  page.locator(".costs").scroll_into_view_if_needed()
+        at(52);  page.mouse.wheel(0, 240)
+        at(58);  page.locator(".bullets--risk").scroll_into_view_if_needed()
+        at(67);  page.locator(".hashstrip").first.scroll_into_view_if_needed()
+        at(71);  page.click("details.raw summary")
         at(76);  page.click("details.raw summary")
-        at(82);  page.click("details.raw summary")
 
-        at(84);  page.locator(".gate").scroll_into_view_if_needed()
-        at(88);  page.check("#ack")
-        at(91);  page.click(".gate .btn--wide")
+        at(78);  page.locator(".gate").scroll_into_view_if_needed()
+        at(82);  page.check("#ack")
+        at(85);  page.click(".gate .btn--wide")
         page.wait_for_selector(".receipt__stamp--ok, .receipt__stamp--bad", timeout=120000)
 
-        at(100); page.locator(".receipt__stamp").scroll_into_view_if_needed()
+        at(92);  page.locator(".receipt__stamp").scroll_into_view_if_needed()
         signature = page.input_value("#verify-input")
         print("signature:", signature)
+        print("cluster-on-screen:", page.inner_text("#cluster-label").strip())
+        print("stamp-on-screen:", page.inner_text(".receipt__stamp").strip().replace("\n", " "))
 
-        at(109); page.click("[data-tab='verify']")
-        at(114); page.click(".verify-form button")
+        at(105); page.click("[data-tab='verify']")
+        at(109); page.click(".verify-form button")
         page.wait_for_selector("#verify-stage .verdict--match, #verify-stage .verdict--mismatch",
                                timeout=120000)
 
-        at(124); page.locator("#verify-stage .verdict--match, #verify-stage .verdict--mismatch") \
+        at(119); page.locator("#verify-stage .verdict--match, #verify-stage .verdict--mismatch") \
                      .first.scroll_into_view_if_needed()
-        at(131); page.locator("#verify-stage .costs").scroll_into_view_if_needed()
-        at(140); page.mouse.wheel(0, -600)
+        at(126); page.locator("#verify-stage .costs").scroll_into_view_if_needed()
+        at(132); page.mouse.wheel(0, -600)
         at(DURATION)
 
         path = page.video.path()
         ctx.close()
         browser.close()
-    return pathlib.Path(path)
+    return pathlib.Path(path), signature
 
 
 def main() -> int:
