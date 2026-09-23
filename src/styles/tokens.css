@@ -1,0 +1,145 @@
+/*
+ * Four tastes, four complete looks.
+ *
+ * The taste is the product: choosing one re-skins the page AND changes the
+ * token that gets minted. So these are not four accent colours — each one
+ * moves palette, type, border weight, radius, shadow and texture together.
+ */
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --step--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.84rem);
+  --step-0: clamp(0.94rem, 0.9rem + 0.18vw, 1.02rem);
+  --step-1: clamp(1.12rem, 1.02rem + 0.4vw, 1.35rem);
+  --step-2: clamp(1.5rem, 1.25rem + 1.1vw, 2.2rem);
+  --step-3: clamp(2rem, 1.4rem + 2.6vw, 3.6rem);
+
+  --gutter: clamp(1rem, 0.5rem + 2.4vw, 3.25rem);
+  --stack: clamp(1.1rem, 0.9rem + 0.8vw, 1.75rem);
+
+  --duration: 260ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+  --ok: #1d7a4c;
+  --bad: #b3261e;
+}
+
+/* ── Swiss: grid, weight, silence ─────────────────────────────────────── */
+:root,
+[data-taste='swiss'] {
+  --bg: #f0efea;
+  --surface: #ffffff;
+  --surface-2: #e6e4dd;
+  --ink: #101010;
+  --ink-soft: #5b5b57;
+  --rule: #101010;
+  --rule-w: 1px;
+  --accent: #e3120b;
+  --accent-ink: #ffffff;
+  --radius: 0px;
+  --shadow: none;
+  --display-font: var(--font-sans);
+  --display-weight: 900;
+  --display-tracking: -0.035em;
+  --display-style: normal;
+  --body-font: var(--font-sans);
+  --grain-opacity: 0;
+  --paper-notch: 0;
+}
+
+/* ── Brutal: hard edges, no apology ───────────────────────────────────── */
+[data-taste='brutal'] {
+  --bg: #d9d5c8;
+  --surface: #f5f2e7;
+  --surface-2: #c9c4b4;
+  --ink: #0a0a0a;
+  --ink-soft: #3d3a33;
+  --rule: #0a0a0a;
+  --rule-w: 2.5px;
+  --accent: #ff3b00;
+  --accent-ink: #0a0a0a;
+  --radius: 0px;
+  --shadow: 7px 7px 0 var(--ink);
+  --display-font: var(--font-sans);
+  --display-weight: 900;
+  --display-tracking: -0.05em;
+  --display-style: normal;
+  --body-font: var(--font-mono);
+  --grain-opacity: 0.06;
+  --paper-notch: 0;
+}
+
+/* ── Editorial: serif, column, air ────────────────────────────────────── */
+[data-taste='editorial'] {
+  --bg: #fbf8f1;
+  --surface: #fffdf8;
+  --surface-2: #f1ebdd;
+  --ink: #1b1a17;
+  --ink-soft: #6a6459;
+  --rule: #cdc4b2;
+  --rule-w: 1px;
+  --accent: #8a1c2b;
+  --accent-ink: #fffdf8;
+  --radius: 3px;
+  --shadow: 0 18px 44px -28px rgba(27, 26, 23, 0.5);
+  --display-font: var(--font-serif);
+  --display-weight: 400;
+  --display-tracking: -0.015em;
+  --display-style: normal;
+  --body-font: var(--font-sans);
+  --grain-opacity: 0.035;
+  --paper-notch: 1;
+}
+
+/* ── Terminal: monospace and phosphor ─────────────────────────────────── */
+[data-taste='terminal'] {
+  --bg: #070b08;
+  --surface: #0d130f;
+  --surface-2: #131b15;
+  --ink: #c9e8d2;
+  --ink-soft: #6e8f78;
+  --rule: #23402c;
+  --rule-w: 1px;
+  --accent: #35f58a;
+  --accent-ink: #051009;
+  --radius: 0px;
+  --shadow: 0 0 0 1px #16281c, 0 18px 50px -30px #35f58a;
+  --display-font: var(--font-mono);
+  --display-weight: 600;
+  --display-tracking: -0.02em;
+  --display-style: normal;
+  --body-font: var(--font-mono);
+  --grain-opacity: 0.05;
+  --paper-notch: 0;
+  --ok: #35f58a;
+  --bad: #ff6b5e;
+}
+
+/* The grain/scanline plate. Cheap, composited, and off for Swiss on purpose. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: var(--grain-opacity);
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.5) 0 1px,
+    transparent 1px 3px
+  );
+  mix-blend-mode: overlay;
+  transition: opacity var(--duration) var(--ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "receipt-first",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Receipt-First — the disclosure you are shown before signing is hashed into the transaction you sign. Solana devnet.",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@solana/spl-token": "0.4.9",
+    "@solana/spl-token-metadata": "0.1.6",
+    "@solana/web3.js": "1.95.4",
+    "@wallet-standard/app": "1.1.0",
+    "bs58": "6.0.0"
+  },
+  "devDependencies": {
+    "typescript": "5.6.3",
+    "vite": "5.4.11",
+    "vitest": "2.1.8"
+  }
+}

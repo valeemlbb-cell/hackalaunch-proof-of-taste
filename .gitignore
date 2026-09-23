@@ -1,0 +1,9 @@
+node_modules/
+dist/
+*.local
+.env
+.env.*
+!.env.example
+
+# The demo recording: kept on disk, uploaded to a video host, not committed.
+demo/

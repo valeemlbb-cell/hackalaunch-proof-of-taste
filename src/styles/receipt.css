@@ -1,0 +1,427 @@
+/*
+ * The receipt.
+ *
+ * This is the whole product, so it is drawn as an object rather than a panel:
+ * paper stock, a torn bottom edge, dotted leaders, tabular numerals, and a
+ * stamp that changes as the transaction moves from draft to confirmed.
+ */
+
+.receipt-stage {
+  min-height: 22rem;
+  display: grid;
+}
+
+.receipt-empty {
+  place-self: center;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: var(--step--1);
+  padding: 3rem 1rem;
+  border: var(--rule-w) dashed var(--rule);
+  border-radius: var(--radius);
+  width: 100%;
+}
+
+.receipt-empty span {
+  opacity: 0.7;
+}
+
+.receipt {
+  position: relative;
+  background: var(--surface);
+  color: var(--ink);
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.4rem 1.3rem 2.2rem;
+  display: grid;
+  gap: 1.1rem;
+  animation: receipt-in 420ms var(--ease) both;
+}
+
+/* Editorial gets a torn paper edge; the others keep their hard cut. */
+[data-taste='editorial'] .receipt {
+  --notch: 11px;
+  border-bottom: 0;
+  padding-bottom: 2.8rem;
+  -webkit-mask-image: linear-gradient(#000 0 0), conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg);
+  mask-image: linear-gradient(#000 0 0), conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg);
+  -webkit-mask-size: 100% calc(100% - var(--notch)), calc(var(--notch) * 2) var(--notch);
+  mask-size: 100% calc(100% - var(--notch)), calc(var(--notch) * 2) var(--notch);
+  -webkit-mask-position: top, bottom;
+  mask-position: top, bottom;
+  -webkit-mask-repeat: no-repeat, repeat-x;
+  mask-repeat: no-repeat, repeat-x;
+}
+
+@keyframes receipt-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+.receipt__head {
+  display: grid;
+  gap: 0.35rem;
+  padding-bottom: 0.9rem;
+  border-bottom: var(--rule-w) solid var(--rule);
+}
+
+.receipt__title {
+  font-size: var(--step-2);
+  line-height: 1;
+}
+
+.receipt__sub {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--ink-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem 0.9rem;
+}
+
+.receipt__stamp {
+  position: absolute;
+  top: 1.1rem;
+  right: 1rem;
+  transform: rotate(-9deg);
+  border: 2.5px solid currentColor;
+  border-radius: 3px;
+  padding: 0.18rem 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.82;
+}
+
+.receipt__stamp--draft {
+  color: var(--ink-soft);
+}
+.receipt__stamp--sent {
+  color: var(--accent);
+}
+.receipt__stamp--ok {
+  color: var(--ok);
+}
+.receipt__stamp--bad {
+  color: var(--bad);
+}
+
+.receipt section {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.receipt h3 {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-bottom: var(--rule-w) solid var(--rule);
+  padding-bottom: 0.3rem;
+}
+
+/* ── the step list ─────────────────────────────────────────────────────── */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.05rem;
+  counter-reset: step;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 1.7rem 1fr;
+  gap: 0.15rem 0.55rem;
+  padding: 0.42rem 0;
+  border-bottom: 1px dotted var(--rule);
+  font-size: var(--step--1);
+}
+
+.steps li::before {
+  counter-increment: step;
+  content: counter(step, decimal-leading-zero);
+  font-family: var(--font-mono);
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+  padding-top: 0.12rem;
+}
+
+.steps li p {
+  margin: 0;
+}
+
+.steps li .detail {
+  grid-column: 2;
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+}
+
+.steps li.is-unknown {
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+  color: var(--bad);
+}
+
+/* ── money ─────────────────────────────────────────────────────────────── */
+.costs {
+  display: grid;
+  gap: 0.1rem;
+}
+
+.cost {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 0 0.5rem;
+  padding: 0.38rem 0;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.cost__label {
+  position: relative;
+  font-size: var(--step--1);
+}
+
+.cost__amount {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: var(--step--1);
+  white-space: nowrap;
+}
+
+.cost__note {
+  grid-column: 1 / -1;
+  font-size: 0.76rem;
+  color: var(--ink-soft);
+}
+
+.cost--refundable .cost__amount::after {
+  content: ' ↩';
+  color: var(--ok);
+}
+
+.cost--total {
+  border-bottom: 0;
+  border-top: var(--rule-w) solid var(--rule);
+  margin-top: 0.3rem;
+  padding-top: 0.6rem;
+}
+
+.cost--total .cost__label,
+.cost--total .cost__amount {
+  font-size: var(--step-1);
+  font-weight: 700;
+}
+
+.cost--net .cost__amount {
+  color: var(--accent);
+}
+
+/* ── lists ─────────────────────────────────────────────────────────────── */
+.bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.3rem;
+  font-size: var(--step--1);
+}
+
+.bullets li {
+  display: grid;
+  grid-template-columns: 1rem 1fr;
+  gap: 0.4rem;
+}
+
+.bullets li::before {
+  content: '→';
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+.bullets--risk li::before {
+  content: '!';
+  color: var(--bad);
+  font-weight: 700;
+}
+
+.bullets--risk li.is-blocking {
+  color: var(--bad);
+  font-weight: 600;
+}
+
+/* ── the hash strip ────────────────────────────────────────────────────── */
+.hashstrip {
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.75rem;
+  background: var(--surface-2);
+  display: grid;
+  gap: 0.3rem;
+}
+
+.hashstrip__label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.hashstrip__value {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  word-break: break-all;
+}
+
+.verdict {
+  border-width: calc(var(--rule-w) * 2);
+  border-style: solid;
+  border-radius: var(--radius);
+  padding: 0.9rem 1rem;
+  display: grid;
+  grid-template-columns: 2.4rem 1fr;
+  gap: 0.15rem 0.85rem;
+  align-items: center;
+}
+
+.verdict__mark {
+  grid-row: 1 / 3;
+  font-size: 2rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.verdict__headline {
+  font-family: var(--display-font);
+  font-weight: var(--display-weight);
+  letter-spacing: var(--display-tracking);
+  font-size: var(--step-1);
+  line-height: 1.15;
+}
+
+.verdict__line {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  word-break: break-all;
+  color: var(--ink-soft);
+}
+
+.verdict--match {
+  border-color: var(--ok);
+  background: color-mix(in srgb, var(--ok) 10%, transparent);
+}
+
+.verdict--match .verdict__mark,
+.verdict--match .verdict__headline {
+  color: var(--ok);
+}
+
+.verdict--mismatch {
+  border-color: var(--bad);
+  background: color-mix(in srgb, var(--bad) 12%, transparent);
+}
+
+.verdict--mismatch .verdict__mark,
+.verdict--mismatch .verdict__headline {
+  color: var(--bad);
+}
+
+details.raw {
+  border-top: var(--rule-w) solid var(--rule);
+  padding-top: 0.6rem;
+}
+
+details.raw summary {
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+details.raw pre {
+  margin: 0.6rem 0 0;
+  max-height: 14rem;
+  overflow: auto;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--ink-soft);
+}
+
+/* ── the gate ──────────────────────────────────────────────────────────── */
+.gate {
+  display: grid;
+  gap: 0.7rem;
+  border-top: var(--rule-w) solid var(--rule);
+  padding-top: 0.9rem;
+}
+
+.gate label {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.55rem;
+  align-items: start;
+  font-size: var(--step--1);
+  cursor: pointer;
+}
+
+.gate input[type='checkbox'] {
+  width: 1.05rem;
+  height: 1.05rem;
+  accent-color: var(--accent);
+  margin-top: 0.15rem;
+}
+
+.result {
+  display: grid;
+  gap: 0.4rem;
+  font-size: var(--step--1);
+}
+
+.result a {
+  color: var(--accent);
+  word-break: break-all;
+}
+
+.verify-form {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 34rem;
+  margin-top: var(--stack);
+}
+
+.verify-form label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.verify-form input {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  padding: 0.7rem 0.8rem;
+  border: var(--rule-w) solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.verify-form .btn {
+  justify-self: start;
+}

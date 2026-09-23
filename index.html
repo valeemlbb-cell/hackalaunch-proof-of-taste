@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-taste="swiss">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Receipt-First — the screen you signed, provable on chain</title>
+    <meta
+      name="description"
+      content="A Solana devnet app where the disclosure you read before signing is hashed into the transaction you sign — and anyone can check it afterwards."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111'/%3E%3Cpath d='M8 6h16v20l-4-2-4 2-4-2-4 2z' fill='%23f4f3ef'/%3E%3Cpath d='M11 12h10M11 16h10M11 20h6' stroke='%23111' stroke-width='1.6'/%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;700;900&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="masthead">
+      <div class="masthead__brand">
+        <span class="masthead__mark">▤</span>
+        <span class="masthead__name">Receipt&#8209;First</span>
+      </div>
+      <p class="masthead__claim">
+        The words on the screen are hashed into the transaction you sign.
+        <strong>Devnet only.</strong>
+      </p>
+      <nav class="tabs" aria-label="Sections">
+        <button class="tab is-active" data-tab="mint" type="button">Mint</button>
+        <button class="tab" data-tab="verify" type="button">Verify</button>
+      </nav>
+    </header>
+
+    <main>
+      <!-- ───────────────────────────── MINT ───────────────────────────── -->
+      <section class="panel" id="panel-mint">
+        <div class="column column--argument">
+          <h1 class="lede">
+            Every wallet asks you to sign a <em>hex blob</em>.<br />
+            This one hands you a <em>receipt</em>, then staples it to the chain.
+          </h1>
+
+          <ol class="steps-of-the-thing">
+            <li><span>1</span> Pick a taste. The taste is what gets minted.</li>
+            <li><span>2</span> Read the receipt. Every lamport, in plain English.</li>
+            <li><span>3</span> Sign. The receipt's SHA&#8209;256 rides along in the memo and in the token's own on-chain metadata.</li>
+            <li><span>4</span> Anyone re-derives the receipt from the chain and checks the hash. Including you, in the Verify tab.</li>
+          </ol>
+
+          <fieldset class="tastes">
+            <legend>Choose a taste</legend>
+            <div class="tastes__grid" id="taste-grid"></div>
+          </fieldset>
+
+          <div class="signer" id="signer-box"></div>
+        </div>
+
+        <div class="column column--receipt">
+          <div class="receipt-stage" id="receipt-stage">
+            <p class="receipt-empty">
+              Connect a signer to build the transaction.<br />
+              <span>Nothing is sent until you press sign.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ──────────────────────────── VERIFY ──────────────────────────── -->
+      <section class="panel panel--verify is-hidden" id="panel-verify">
+        <div class="column column--argument">
+          <h1 class="lede">
+            Paste a signature.<br />We rebuild the receipt <em>from the chain</em> and check the hash.
+          </h1>
+          <p class="prose">
+            The verifier does not trust this app's memory. It fetches the confirmed transaction,
+            decodes the instructions with the same decoder used before signing, regenerates every
+            sentence, hashes the result, and compares it with the hash the transaction carries.
+            If a single lamport of disclosed cost differs, the hashes diverge.
+          </p>
+          <ol class="steps-of-the-thing">
+            <li><span>1</span> Fetch the confirmed transaction from the cluster.</li>
+            <li><span>2</span> Decode all of its instructions with the same decoder used before signing.</li>
+            <li><span>3</span> Regenerate the receipt and hash it.</li>
+            <li><span>4</span> Compare that hash with the one the transaction carries — and compare the quote with what the chain actually took.</li>
+          </ol>
+          <form class="verify-form" id="verify-form">
+            <label for="verify-input">Transaction signature (devnet)</label>
+            <input
+              id="verify-input"
+              name="signature"
+              type="text"
+              spellcheck="false"
+              autocomplete="off"
+              placeholder="5Nq…"
+            />
+            <button class="btn btn--primary" type="submit">Check it</button>
+          </form>
+        </div>
+        <div class="column column--receipt">
+          <div class="receipt-stage" id="verify-stage">
+            <p class="receipt-empty">
+              No signature checked yet.<br /><span>Mint a badge first, or paste any Receipt-First signature.</span>
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="colophon">
+      <p>
+        Cluster <code id="cluster-label">checking…</code> — identified by its genesis hash, not by
+        the RPC URL. Test SOL, no monetary value. No private keys are ever requested, stored or
+        transmitted by this app. MIT licensed.
+      </p>
+      <p class="colophon__rpc">
+        RPC <code id="rpc-label">—</code>
+        <button type="button" class="link" id="rpc-change">change</button>
+      </p>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
