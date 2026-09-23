@@ -3,9 +3,9 @@
 - **Project name:** Receipt-First
 - **Hackathon:** https://hackalaunch.com/h/proof-of-taste
 - **Network:** Solana **devnet** only
-- **Repository:** `<REPO_URL>` _(placeholder — filled in after `gh repo create` per RUN.md step 1)_
-- **Live app:** `<LIVE_URL>` _(placeholder — GitHub Pages URL from RUN.md step 2)_
-- **Demo video:** `<VIDEO_URL>` _(placeholder — upload `demo.mp4` / `demo_small.mp4`, RUN.md step 3)_
+- **Repository:** <https://github.com/valeemlbb-cell/hackalaunch-proof-of-taste>
+- **Live app:** <https://valeemlbb-cell.github.io/hackalaunch-proof-of-taste/> (GitHub Pages, deployed by CI on every push to the default branch)
+- **Demo video:** `<VIDEO_URL>` — upload `demo_x.mp4` (≤ 20 MB, ≤ 140 s, fits X's limit) or `demo.mp4` (1080p) and paste the link. The platform wants a URL, so the files stay out of git.
 - **Payout address:** `7W31iaCmjerN1jkpEnmZevn74SZxv83yEQvLsnc4PS7Q`
 - **Team:** Warung Ops — Henggar (rakavaleeqa@warungsosmed.store, Telegram @sambobolo, X @issue0x)
 

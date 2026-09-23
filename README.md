@@ -5,6 +5,10 @@
 Solana devnet. Built for the [Proof of Taste](https://hackalaunch.com/h/proof-of-taste) hackathon,
 where the brief is that the on-chain mechanic and the design should be the same thing.
 
+**▶ Live app: <https://valeemlbb-cell.github.io/hackalaunch-proof-of-taste/>** — no install, no
+wallet required (there is a burner button), devnet only. It refuses to build a transaction against
+mainnet at all.
+
 ![The hero, in the Swiss taste](docs/01-hero-swiss.png)
 
 ---
@@ -201,5 +205,9 @@ responsible for the submission.
 
 ## Links
 
-- Live app: _to be filled in after the first deploy — see [RUN.md](RUN.md)_
-- Demo video: _to be filled in after upload — the file is `demo/demo.mp4`_
+- **Live app: <https://valeemlbb-cell.github.io/hackalaunch-proof-of-taste/>** — deployed from
+  `main`/`master` by [`.github/workflows/pages.yml`](.github/workflows/pages.yml), which runs
+  `npm ci && npm test && npm run build` first, so a red test suite never reaches the live URL.
+- **Repository: <https://github.com/valeemlbb-cell/hackalaunch-proof-of-taste>**
+- Demo video: `demo_x.mp4` in the packet folder (uploaded to X / YouTube for the submission form —
+  the platform wants a link, so the file itself is deliberately not committed).
