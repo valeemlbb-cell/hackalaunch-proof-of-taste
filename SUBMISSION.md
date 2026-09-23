@@ -1,3 +1,56 @@
+<!-- generated-header v2 -->
+# SUBMISSION — proof-of-taste
+
+Paste-ready. Five fields, in the order the HackaLaunch form asks for them.
+Refreshed 2026-09-24T05:06:10+07:00.
+
+---
+
+## TITLE  (79/80 chars)
+
+```
+Receipt-First — the disclosure you read is hashed into the transaction you sign
+```
+
+## DESCRIPTION  (1427 chars)
+
+```
+Receipt-First makes the disclosure you read part of the transaction you sign.
+
+What it does: before asking for a signature it decodes the whole transaction — every instruction, every lamport, what you receive, what can go wrong — renders that as a plain-English receipt, hashes the receipt with SHA-256, and writes the hash into the transaction itself: once as an SPL Memo, once as a `receipt` field in the badge's Token-2022 metadata. Afterwards anyone can pull the confirmed transaction, re-derive the receipt from its instructions alone, hash it, and compare. The app's Verify tab does exactly that and trusts nothing the app remembers.
+
+How it works: no custom program. Token-2022 plus its metadata extension, ATA, and SPL Memo. Mint authority is revoked in the same transaction and close authority stays with you, so there is no upgrade authority anywhere that could change the rules after you signed. The four tastes (Swiss, Brutal, Editorial, Terminal) move palette, type, border weight, radius and texture together and also change the on-chain `taste` field — the hash covers it, so the look you chose is part of what you signed for.
+
+Real vs mocked: real. Solana devnet, real Token-2022 mints, real memos, real verification against confirmed transactions. Nothing is stubbed and nothing touches mainnet.
+
+How to run: `npm install && npm test`, then `npm run dev`. Live build also published on GitHub Pages; see RUN.md.
+```
+
+## REPO URL
+
+```
+https://github.com/valeemlbb-cell/hackalaunch-proof-of-taste
+```
+
+## VIDEO URL
+
+```
+VIDEO_URL_PENDING
+```
+
+> The main session posts `demo_x.mp4` from this folder to X and replaces the
+> line above with the public post URL. The form needs a **link**; a file is useless.
+
+## SOLANA PAYOUT ADDRESS
+
+```
+7W31iaCmjerN1jkpEnmZevn74SZxv83yEQvLsnc4PS7Q
+```
+
+---
+
+## Appendix — earlier submission notes (kept verbatim)
+
 # Submission — Proof of Taste (HackaLaunch)
 
 - **Project name:** Receipt-First
